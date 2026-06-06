@@ -1,0 +1,36 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8singressauthz
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sIngressAuthz
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8singressauthz
+
+        # Ensure OPA evaluation does not trigger O(n^2) complexity lookups.
+        # This rule checks that ingress objects do not specify un-vetted auth bypass rules.
+        violation[{"msg": msg}] {
+          input.review.object.kind == "Ingress"
+          annotations := input.review.object.metadata.annotations
+          val := annotations["bypass-authz-check"]
+          val == "true"
+          msg := sprintf("Ingress '%v' specifies bypass-authz-check which violates enterprise security policies.", [input.review.object.metadata.name])
+        }
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sIngressAuthz
+metadata:
+  name: enforce-ingress-authz
+spec:
+  match:
+    kinds:
+      - apiGroups: ["networking.k8s.io"]
+        kinds: ["Ingress"]
+    namespaces:
+      - default
+      - prod-apps

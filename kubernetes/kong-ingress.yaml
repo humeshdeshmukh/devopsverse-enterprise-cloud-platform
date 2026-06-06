@@ -1,0 +1,59 @@
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: kong
+spec:
+  controller: ingress-controllers.konghq.com/kong
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: global-rate-limit
+  namespace: kong-ingress
+config:
+  minute: 100
+  policy: local
+plugin: rate-limiting
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: devopsverse-ingress
+  namespace: default
+  annotations:
+    konghq.com/plugins: global-rate-limit
+    konghq.com/protocols: https
+spec:
+  ingressClassName: kong
+  rules:
+    - host: api.devopsverse.local
+      http:
+        paths:
+          - path: /api/v1/auth
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-api
+                port:
+                  number: 80
+          - path: /api/v1/payments
+            pathType: Prefix
+            backend:
+              service:
+                name: payment-api
+                port:
+                  number: 80
+          - path: /api/v1/orders
+            pathType: Prefix
+            backend:
+              service:
+                name: order-api
+                port:
+                  number: 80
+          - path: /api/v1/shipping
+            pathType: Prefix
+            backend:
+              service:
+                name: shipping-api
+                port:
+                  number: 80

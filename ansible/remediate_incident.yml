@@ -1,0 +1,55 @@
+---
+# Ansible Playbook to remediate Global Platform Degradation incident
+# Usage: ansible-playbook -i inventory remediate_incident.yml
+
+- name: Cascading Outage Automatic Remediation
+  hosts: control_plane
+  become: true
+  tasks:
+    - name: Step 1.1 - Revert OPA Rego policy to last known good stable state
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ lookup('url', 'https://raw.githubusercontent.com/devopsverse/policies/stable/ingress-authz.rego', split_lines=false) }}"
+      ignore_errors: true
+
+    - name: Step 1.2 - Scale Kong Ingress Controller to handle queued traffic backlogs
+      kubernetes.core.k8s_scale:
+        api_version: apps/v1
+        kind: Deployment
+        name: kong-ingress-controller
+        namespace: kong
+        replicas: 5
+
+    - name: Step 3.1 - Immediately evict compromised pod flagged by Falco threat logs
+      kubernetes.core.k8s:
+        state: absent
+        api_version: v1
+        kind: Pod
+        label_selectors:
+          - app=rogue-service
+        namespace: production
+        wait: false
+
+    - name: Step 3.2 - Restart Istio proxy daemons to clear locked/exhausted connections
+      kubernetes.core.k8s:
+        state: patched
+        kind: Deployment
+        name: "{{ item }}"
+        namespace: istio-system
+        definition:
+          spec:
+            template:
+              metadata:
+                annotations:
+                  restartedAt: "{{ ansible_date_time.iso8601 }}"
+      loop:
+        - istiod
+        - istio-ingressgateway
+
+    - name: Step 4.1 - Verify system recovery metrics
+      command: kubectl get pods -A
+      register: pod_status
+
+    - name: Print active pod recovery details
+      debug:
+        var: pod_status.stdout_lines

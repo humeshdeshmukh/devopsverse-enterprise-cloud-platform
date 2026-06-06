@@ -1,0 +1,54 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: devopsverse-monitor
+  namespace: observability
+  labels:
+    release: prometheus-operator
+spec:
+  selector:
+    matchLabels:
+      monitor-traffic: "true"
+  endpoints:
+    - port: http-metrics
+      path: /metrics
+      interval: 15s
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: loki-custom-limits
+  namespace: observability
+data:
+  limits.yaml: |
+    limits_config:
+      enforce_metric_name: false
+      reject_old_samples: true
+      reject_old_samples_max_age: 168h
+      max_cache_freshness_per_query: 10m
+      split_queries_by_interval: 15m
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tempo-custom-config
+  namespace: observability
+data:
+  tempo.yaml: |
+    distributor:
+      receivers:
+        otlp:
+          protocols:
+            http:
+            grpc:
+    ingester:
+      lifecycler:
+        ring:
+          kvstore:
+            store: inmemory
+          replication_factor: 1
+    storage:
+      trace:
+        backend: local
+        local:
+          path: /var/tempo/traces

@@ -1,0 +1,97 @@
+---
+# Ansible Playbook to bootstrap system configurations, security daemons, and mesh proxies
+
+- name: Basic Node Hardening and Docker Engine Setup
+  hosts: kubernetes_nodes, gateways
+  become: true
+  tasks:
+    - name: Update apt software repository cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install baseline utilities
+      apt:
+        name:
+          - curl
+          - apt-transport-https
+          - ca-certificates
+          - gnupg
+          - lsb-release
+        state: present
+
+    - name: Setup Docker GPG repository key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Harden system sysctl values for network security
+      sysctl:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        sysctl_set: yes
+        state: present
+        reload: yes
+      with_dict:
+        "net.ipv4.conf.all.accept_redirects": "0"
+        "net.ipv4.conf.all.secure_redirects": "0"
+        "net.ipv4.conf.all.send_redirects": "0"
+        "net.ipv4.ip_forward": "1"
+
+- name: Bootstrap Falco Runtime Threat Auditing
+  hosts: kubernetes_nodes
+  become: true
+  tasks:
+    - name: Download Falco GPG repository key
+      apt_key:
+        url: https://falco.org/repo/falcosecurity-packages.asc
+        state: present
+
+    - name: Register Falco stable package repository
+      apt_repository:
+        repo: "deb https://download.falco.org/packages/deb stable main"
+        state: present
+        filename: falcosecurity
+
+    - name: Install Falco and kernel headers
+      apt:
+        name:
+          - linux-headers-generic
+          - falco
+        state: present
+
+    - name: Enable and restart Falco auditing daemon
+      systemd:
+        name: falco
+        state: restarted
+        enabled: yes
+
+- name: Deploy Service Mesh Operator and CLI Tools
+  hosts: control_plane
+  become: true
+  tasks:
+    - name: Verify Helm package manager status
+      command: helm version
+      register: helm_check
+      ignore_errors: true
+
+    - name: Register Istio Helm Repository
+      kubernetes.core.helm_repository:
+        name: istio
+        repo_url: "https://istio-release.storage.googleapis.com/charts"
+      when: helm_check.rc == 0
+
+    - name: Install Istio Base Custom Resource Definitions (CRDs)
+      kubernetes.core.helm:
+        name: istio-base
+        chart_ref: istio/base
+        release_namespace: istio-system
+        create_namespace: true
+      when: helm_check.rc == 0
+
+    - name: Rollout Istiod Control Plane Daemon
+      kubernetes.core.helm:
+        name: istiod
+        chart_ref: istio/istiod
+        release_namespace: istio-system
+      when: helm_check.rc == 0
