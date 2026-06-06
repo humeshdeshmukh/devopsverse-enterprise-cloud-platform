@@ -1,10 +1,38 @@
 # 🌌 DevOpsVerse Enterprise Cloud Platform
 
 [![Platform State](https://img.shields.io/badge/DevOpsVerse-ONLINE-emerald?style=for-the-badge&logo=kubernetes&logoColor=white)](http://localhost:3000)
+
+**Application & Portal Frameworks**
 [![Next.js](https://img.shields.io/badge/Next.js-v14-blue?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org)
-[![NestJS](https://img.shields.io/badge/NestJS-v10-red?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.co)
-[![mTLS](https://img.shields.io/badge/Istio-mTLS--Strict-indigo?style=for-the-badge&logo=istio&logoColor=white)](https://istio.io)
-[![GitOps](https://img.shields.io/badge/ArgoCD-Auto--Sync-orange?style=for-the-badge&logo=argo&logoColor=white)](https://argoproj.github.io/cd/)
+[![NestJS](https://img.shields.io/badge/NestJS-v10-red?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com)
+[![Backstage](https://img.shields.io/badge/Backstage-Catalog-9BF0E1?style=for-the-badge&logo=backstage&logoColor=black)](https://backstage.io)
+
+**Multi-Cloud & Orchestration**
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-Orchestration-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io)
+[![Kong](https://img.shields.io/badge/Kong-API%20Gateway-1A1A1A?style=for-the-badge&logo=kong&logoColor=white)](https://konghq.com)
+[![Istio](https://img.shields.io/badge/Istio-mTLS--Strict-indigo?style=for-the-badge&logo=istio&logoColor=white)](https://istio.io)
+[![ArgoCD](https://img.shields.io/badge/ArgoCD-GitOps-orange?style=for-the-badge&logo=argo&logoColor=white)](https://argoproj.github.io/cd/)
+[![Terraform](https://img.shields.io/badge/Terraform-IaC-844FBA?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io)
+[![Ansible](https://img.shields.io/badge/Ansible-Config-EE0000?style=for-the-badge&logo=ansible&logoColor=white)](https://www.ansible.com)
+
+**Data Stores & Messaging**
+[![Kafka](https://img.shields.io/badge/Apache%20Kafka-Streaming-231F20?style=for-the-badge&logo=apachekafka&logoColor=white)](https://kafka.apache.org)
+[![RabbitMQ](https://img.shields.io/badge/RabbitMQ-Broker-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white)](https://www.rabbitmq.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org)
+[![Redis](https://img.shields.io/badge/Redis-Cache-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io)
+
+**DevSecOps & Threat Shield**
+[![Trivy](https://img.shields.io/badge/Trivy-Vulnerability%20Scan-1C71B7?style=for-the-badge&logo=aquasecurity&logoColor=white)](https://aquasecurity.github.io/trivy/)
+[![Falco](https://img.shields.io/badge/Falco-Runtime%20Threat-00A6C0?style=for-the-badge&logo=falco&logoColor=white)](https://falco.org)
+[![OPA Gatekeeper](https://img.shields.io/badge/OPA-Gatekeeper-3E85C6?style=for-the-badge&logo=openpolicyagent&logoColor=white)](https://openpolicyagent.org)
+
+**Observability & AIOps**
+[![Prometheus](https://img.shields.io/badge/Prometheus-Metrics-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)](https://prometheus.io)
+[![Loki](https://img.shields.io/badge/Loki-Log%20Aggregator-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/oss/loki/)
+[![Tempo](https://img.shields.io/badge/Tempo-Traces-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/oss/tempo/)
+[![Gemini](https://img.shields.io/badge/Gemini-AI%20SRE-8E75C2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev)
+[![OpenAI](https://img.shields.io/badge/OpenAI-GPT%20Audit-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com)
+
 
 Welcome to **DevOpsVerse**, the flagship cloud control plane and operations portal designed to demonstrate production-grade multi-cloud engineering, automation, SRE, and DevSecOps patterns.
 
